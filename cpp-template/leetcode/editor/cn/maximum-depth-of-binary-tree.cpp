@@ -8,6 +8,7 @@
 #include "../common/ListNode.cpp"
 #include "../common/TreeNode.cpp"
 #include <iostream>
+#include <queue>
 #include <stack>
 #include <string>
 #include <vector>
@@ -70,11 +71,35 @@ class Solution {
         return max_depth;
     }
 
+    int fn4(TreeNode* root) {
+        if (root == nullptr)
+            return 0;
+        queue<TreeNode*> que;
+        que.push(root);
+        int depth = 0;
+
+        while (!que.empty()) {
+            auto que_size = que.size();
+            for (int i = 0; i < que_size; ++i) {
+                TreeNode* node = que.front();
+                que.pop();
+
+                if (node->left != nullptr)
+                    que.push(node->left);
+                if (node->right != nullptr)
+                    que.push(node->right);
+            }
+
+            ++depth;
+        }
+        return depth;
+    }
+
     int maxDepth(TreeNode* root) {
         // int cur = 0, depth = 0;
         // fn1(root, cur, depth);
         // return depth;
-        return fn3(root);
+        return fn4(root);
     }
 };
 // @lc code=end
