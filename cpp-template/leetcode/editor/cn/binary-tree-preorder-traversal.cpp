@@ -1,39 +1,54 @@
-#include <iostream>
 #include "../common/ListNode.cpp"
 #include "../common/TreeNode.cpp"
-
+#include <iostream>
+#include <stack>
 using namespace std;
 
-//leetcode submit region begin(Prohibit modification and deletion)
+// leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-public:
+  public:
     vector<int> res;
 
-    // 返回前序遍历结果
-    vector<int> preorderTraversal(TreeNode* root) {
-        traverse(root);
-        return res;
-    }
-
-    // 二叉树遍历函数
-    void traverse(TreeNode* root) {
+    void fn1(TreeNode* root) {
         if (root == nullptr) {
             return;
         }
-        // 前序遍历位置
         res.push_back(root->val);
-        traverse(root->left);
-        traverse(root->right);
+        fn1(root->left);
+        fn1(root->right);
+    }
+
+    void fn2(TreeNode* root) {
+        if (root == nullptr)
+            return;
+        stack<TreeNode*> st;
+        st.push(root);
+        while (!st.empty()) {
+            auto node = st.top();
+            st.pop();
+            if (node == nullptr)
+                continue;
+            res.push_back(node->val);
+            st.push(node->right);
+            st.push(node->left);
+        }
+        return;
+    }
+
+    vector<int> preorderTraversal(TreeNode* root) {
+        // fn1(root);
+        fn2(root);
+        return res;
     }
 };
 
-//leetcode submit region end(Prohibit modification and deletion)
-
+// leetcode submit region end(Prohibit modification and deletion)
 
 int main() {
     // your test code here
     Solution solution;
-    TreeNode *root = TreeNode::createRoot({1, 22, 3, 4, 5, nullopt, 8, nullopt, nullopt, 6, 7, 9});
+    TreeNode* root = TreeNode::createRoot(
+        {1, 22, 3, 4, 5, nullopt, 8, nullopt, nullopt, 6, 7, 9});
     vector<int> result = solution.preorderTraversal(root);
     for (int val : result) {
         cout << val << " ";
