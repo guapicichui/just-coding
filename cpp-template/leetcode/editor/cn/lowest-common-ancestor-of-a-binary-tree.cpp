@@ -74,8 +74,23 @@ class Solution {
         return common_node;
     }
 
+    TreeNode* fn2(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if (root == nullptr)
+            return nullptr;
+        if (root == p || root == q)
+            return root;
+
+        auto left_node = fn2(root->left, p, q);
+        auto right_node = fn2(root->right, p, q);
+
+        if (left_node && right_node)
+            return root;
+        return left_node != nullptr ? left_node : right_node;
+    }
+
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        return fn1(root, p, q);
+        // return fn1(root, p, q);
+        return fn2(root, p, q);
     }
 };
 // @lc code=end
