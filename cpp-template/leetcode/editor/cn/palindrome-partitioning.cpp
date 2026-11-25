@@ -9,6 +9,7 @@
 #include "../common/TreeNode.cpp"
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
 
 using namespace std;
@@ -16,9 +17,8 @@ using namespace std;
 // @lc code=start
 class Solution {
   private:
-    string path;
-    vector<string> combo;
-    vector<vector<string>> result;
+    vector<tuple<int, int>> combo;
+    vector<vector<tuple<int, int>>> result;
 
     bool isPalindrome(const string& s) {
         int left = 0;
@@ -35,33 +35,52 @@ class Solution {
         return true;
     }
 
+    bool isPalindrome(const string& s, int start, int end) {
+        int left = start;
+        int right = end;
+
+        while (left < right) {
+            if (s[left] != s[right])
+                return false;
+
+            ++left;
+            --right;
+        }
+
+        return true;
+    }
+
   public:
-    void dfs(const string& str, int index) {
-        if (index == str.size()) {
+    void dfs(const string& str, int start, int end) {
+        if (start == str.size() && end == str.size()) {
             result.push_back(combo);
             return;
         }
+        if (end == str.size())
+            return;
 
-        path.push_back(str[index++]);
+        if (isPalindrome(str, start, end)) {
+            combo.push_back({start, end});
 
-        if (isPalindrome(path)) {
-            combo.push_back(path);
-            path.clear();
-            dfs(str, index);
-            auto last_str = combo.back();
+            dfs(str, end + 1, end + 1);
+
             combo.pop_back();
-            path = last_str;
         }
 
-        if (index != str.size())
-            dfs(str, index);
-
-        path.pop_back();
+        dfs(str, start, end + 1);
     }
 
     vector<vector<string>> fn1(const string& str) {
-        dfs(str, 0);
-        return result;
+        dfs(str, 0, 0);
+        vector<vector<string>> result_str;
+        for (const auto& item : result) {
+            vector<string> combination;
+            for (auto [i, j] : item) {
+                combination.push_back(str.substr(i, j - i + 1));
+            }
+            result_str.push_back(combination);
+        }
+        return result_str;
     }
 
     vector<vector<string>> partition(string s) { return fn1(s); }
