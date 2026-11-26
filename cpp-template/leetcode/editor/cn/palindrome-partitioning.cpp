@@ -17,8 +17,25 @@ using namespace std;
 // @lc code=start
 class Solution {
   private:
+    vector<vector<bool>> pal;
     vector<tuple<int, int>> combo;
     vector<vector<tuple<int, int>>> result;
+
+    void buildPal(const string& str) {
+        auto n = str.size();
+        pal.assign(n, vector<bool>(n, false));
+
+        for (int i = n - 1; i >= 0; --i)
+            for (int j = i; j < n; ++j) {
+                pal[i][j] = str[i] == str[j] && (j - i < 2 || pal[i + 1][j - 1]);
+            }
+    }
+
+    bool isPalindrome(int i, int j) {
+        if (i >= pal.size() || j >= pal.size())
+            return false;
+        return pal[i][j];
+    }
 
     bool isPalindrome(const string& s) {
         int left = 0;
@@ -59,7 +76,8 @@ class Solution {
         if (end == str.size())
             return;
 
-        if (isPalindrome(str, start, end)) {
+        // if (isPalindrome(str, start, end)) {
+        if (isPalindrome(start, end)) {
             combo.push_back({start, end});
 
             dfs(str, end + 1, end + 1);
@@ -71,6 +89,7 @@ class Solution {
     }
 
     vector<vector<string>> fn1(const string& str) {
+        buildPal(str);
         dfs(str, 0, 0);
         vector<vector<string>> result_str;
         for (const auto& item : result) {
